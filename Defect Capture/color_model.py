@@ -62,14 +62,14 @@ b_model.fit(x_b, y_b)
 pred_val_b = b_model.predict(val_x_b)
 print("MAE : " + str(mean_absolute_error(val_y_b, pred_val_b)))
 
-import joblib
-joblib.dump(r_model, open("r_model", 'wb'))
-joblib.dump(g_model, open("g_model", 'wb'))
-joblib.dump(b_model, open("b_model", 'wb'))
+import pickle
+pickle.dump(r_model, open("r_model", 'wb'))
+pickle.dump(g_model, open("g_model", 'wb'))
+pickle.dump(b_model, open("b_model", 'wb'))
 ###########################
-loaded_model_r = joblib.load(open("r_model", 'rb'))
-loaded_model_g = joblib.load(open("g_model", 'rb'))
-loaded_model_b = joblib.load(open("b_model", 'rb'))
+loaded_model_r = pickle.load(open("r_model", 'rb'))
+loaded_model_g = pickle.load(open("g_model", 'rb'))
+loaded_model_b = pickle.load(open("b_model", 'rb'))
 test = [[200,200,200]]
 test_df = pd.DataFrame(test)
 test_df.columns = ['r','g','b']
