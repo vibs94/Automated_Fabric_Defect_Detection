@@ -1,5 +1,5 @@
 from pandas import *
-import joblib
+import pickle
 
 
 class ColorPredict:
@@ -8,7 +8,7 @@ class ColorPredict:
     loaded_model_b = ''
 
     def __init__(self):
-        ColorPredict.loaded_model_r = joblib.load(open("models/r_model", 'rb'))
+        ColorPredict.loaded_model_r = pickle.load(open("models/r_model", 'rb'))
         #ColorPredict.loaded_model_g = pickle.load(open("models/g_model.jpg", 'rb'))
         #ColorPredict.loaded_model_b = pickle.load(open("models/b_model.jpg", 'rb'))
         pass
