@@ -8,9 +8,9 @@ class ColorPredict:
     loaded_model_b = ''
 
     def __init__(self):
-        ColorPredict.loaded_model_r = pickle.load(open("r_model.jpg", 'rb'))
-        ColorPredict.loaded_model_g = pickle.load(open("g_model.jpg", 'rb'))
-        ColorPredict.loaded_model_b = pickle.load(open("b_model.jpg", 'rb'))
+        ColorPredict.loaded_model_r = pickle.load(open("models/r_model.jpg", 'rb'))
+        ColorPredict.loaded_model_g = pickle.load(open("models/g_model.jpg", 'rb'))
+        ColorPredict.loaded_model_b = pickle.load(open("models/b_model.jpg", 'rb'))
 
     def predict(self, r, g, b):
         visible_color = [[200, 200, 200]]
