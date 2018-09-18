@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.neighbors import KNeighborsRegressor
 
-file = pd.read_csv(r'C:\Users\vibodha\Downloads\results.txt',header=None)
+file = pd.read_csv(r'results.txt',header=None)
 file.columns = ['real','visible']
 
 _visible = []
