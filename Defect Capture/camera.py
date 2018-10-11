@@ -14,7 +14,7 @@ class Camera:
     def capture(self,folder_name,filename,sleep_time):
         Camera.camera.start_preview()
         sleep(sleep_time)#1
-        Camera.camera.capture('/home/pi/Desktop/FYP/Automated_Fabric_Defect_Detection/Defect Capture/' + str(folder_name) + '/'+ str(filename)+'.jpg')
+        Camera.camera.capture('/home/pi/Desktop/FYP/Images/' + str(folder_name) + '/'+ str(filename)+'.jpg')
         Camera.camera.stop_preview()
 
     def preview(self,sleep_time):

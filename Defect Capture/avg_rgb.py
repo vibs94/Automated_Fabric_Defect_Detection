@@ -3,7 +3,7 @@ from PIL import Image
 class PixelCounter(object):
   ''' loop through each pixel and average rgb '''
   def __init__(self, folder,imageName):
-      self.pic = Image.open('/home/pi/Desktop/FYP/Automated_Fabric_Defect_Detection/Defect Capture/'+folder+'/'+ imageName+'.jpg')
+      self.pic = Image.open('/home/pi/Desktop/FYP/Images/'+folder+'/'+ imageName+'.jpg')
       # load image data
       self.imgData = self.pic.load()
   def averagePixels(self):
