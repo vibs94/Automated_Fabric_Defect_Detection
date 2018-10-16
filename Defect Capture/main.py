@@ -9,7 +9,7 @@ panel= LedPanel()
 colorPredict = ColorPredict()
 
 folder_name = 'raw_cloth'
-filename='cloth'
+filename='raw_cloth'
     
 panel.set_color_rgb('255 50 100')
 camera.capture(folder_name,filename,0)
@@ -22,8 +22,8 @@ colo = colorPredict.predict(r,g,b)
 print(colo)
 
 time = datetime.datetime.now()
-folder_name = 'line_cloth'
-filename='line_'+ str(time)
+folder_name = 'hole_cloth'
+filename='hole_'+ str(time)
 panel.set_color_rgb(colo)
 camera.capture(folder_name,filename,0)
         
