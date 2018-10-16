@@ -1,19 +1,25 @@
 import time
+from product_line import *
+from check import *
 
 class Process:
 	
-	i = 1
+	check = ""
+	productLine = ""
 
 	def _init_(self):
-		Test.i = 1
+		Process.check = Check(1)
+		productLine = ProductLine()
+
 	def run(self):
-		while(Test.i):
-			print("----------------runing------------------")
+		while(check.isVal(1)):
+			print("=============================================== Running ===============================================")
+			image = productLine.getImage()
 			time.sleep(1)
-		print("----------------stoped------------------")
+		print("=============================================== Stoped ===============================================")
 
 	def stop(self):
-		Test.i = 0
+		check.reverseVal()
 
 	def setup(self):
-		Test.i = 1
+		Process.check = Check(1)
