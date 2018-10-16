@@ -3,22 +3,22 @@ from flask_restful import Resource, Api
 from json import dumps
 import threading
 import time
-from test_class import *
+from process import *
 from check import *
 
 app = Flask(__name__)
 api = Api(app)
-b = ""
-t = Test()
-c = Check(0)
+thread = ""
+process = Process()
+check = Check(0)
 
 class Start(Resource):
 	def get(self):		
-		if(c.isVal(0)):
-			c.reverseVal()
-			t.setup()
-			b = threading.Thread(name='background', target=t.run)
-			b.start()
+		if(check.isVal(0)):
+			check.reverseVal()
+			process.setup()
+			thread = threading.Thread(name='background', target=process.run)
+			thread.start()
 			print('********************************** thread started *********************************')
 			return {'status':'started'}
 		else:
@@ -26,8 +26,8 @@ class Start(Resource):
 
 class Stop(Resource):
 	def get(self):
-		t.stop()
-		c.reverseVal()
+		process.stop()
+		check.reverseVal()
 		return {'status':'stoped'}
 
 
