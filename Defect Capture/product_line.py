@@ -16,6 +16,9 @@ class ProductLine:
 		ProductLine.panel = LedPanel()
 		ProductLine.colorPredict = ColorPredict()
 
+	def setLEDColor(self,r,g,b):
+		colo = str(r)+" "+str(g)+" "+str(b)
+		ProductLine.panel.set_color_rgb(colo)
 
 	def getClothColor(self):
 		older_name = 'raw_cloth'
@@ -31,6 +34,7 @@ class ProductLine:
 		print("=============================================== Cloth color captured - "+colo+" ===============================================")
 
 		ProductLine.panel.set_color_rgb(colo)
+		return colo
 
 	def getImage(self):
 
@@ -41,4 +45,5 @@ class ProductLine:
 		ProductLine.camera.capture(folder_name,filename,0)
 		        
 		print("================================================ Image captured ===============================================")
+		return Image.open('/home/pi/Desktop/FYP/Images/'+folder_name+'/'+ filename+'.jpg')
 
