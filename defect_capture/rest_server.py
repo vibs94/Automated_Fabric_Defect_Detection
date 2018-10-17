@@ -5,12 +5,14 @@ import threading
 import time
 from process import *
 from check import *
+from product_line import *
 
 app = Flask(__name__)
 api = Api(app)
 thread = ""
 process = Process()
 check = Check(0)
+productLine = ProductLine()
 
 class Start(Resource):
 	def get(self):		
@@ -30,9 +32,15 @@ class Stop(Resource):
 		check.reverseVal()
 		return {'status':'stoped'}
 
+##class OffLight(Resource):
+##	def get(self):
+##		productLine.setLEDColor(0,0,0)
+##		return {'status':'light off'}
+
 
 api.add_resource(Start, '/start') # Route_1
 api.add_resource(Stop, '/stop') # Route_2
+api.add_resource(Stop, '/light_off') # Route_3
 
 if __name__ == '__main__':
      app.run(port='5001')
