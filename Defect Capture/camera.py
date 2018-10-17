@@ -12,10 +12,10 @@ class Camera:
         Camera.camera.preview_window=(620, 320, 640, 480)
 
     def capture(self,folder_name,filename,sleep_time):
-        Camera.camera.start_preview()
+##        Camera.camera.start_preview()
         sleep(sleep_time)#1
         Camera.camera.capture('/home/pi/Desktop/FYP/Images/' + str(folder_name) + '/'+ str(filename)+'.jpg')
-        Camera.camera.stop_preview()
+##        Camera.camera.stop_preview()
 
     def preview(self,sleep_time):
         Camera.camera.start_preview()

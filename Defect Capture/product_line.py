@@ -3,14 +3,15 @@ from led_panel import *
 from camera import *
 from color_code import *
 import datetime
+from PIL import Image
+from io import BytesIO
 
 
 camera = ""
 panel = ""
 colorPredict = ""
 
-class ProductLine:
-
+class ProductLine:                
 	def __init__(self):
 		ProductLine.camera = Camera()
 		ProductLine.panel = LedPanel()
@@ -45,5 +46,13 @@ class ProductLine:
 		ProductLine.camera.capture(folder_name,filename,0)
 		        
 		print("================================================ Image captured ===============================================")
-		return Image.open('/home/pi/Desktop/FYP/Images/'+folder_name+'/'+ filename+'.jpg')
+		image = Image.open('/home/pi/Desktop/FYP/Images/'+folder_name+'/'+ filename+'.jpg')
+		x, y, h, w = 400, 150, 550, 500
+		croped_image = image.crop((x, y, x+h, y+w))
+##		croped_image.show()
+		buffered = BytesIO()
+		croped_image.save(buffered, format = "JPEG")
+		byte_image = buffered.getvalue()
+		return byte_image, folder_name, filename
+##		return "test"
 
