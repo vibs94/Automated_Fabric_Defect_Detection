@@ -1,2 +1,2 @@
-# Automated_Fabric_Defect_Detection
-# Embedded System (Image)
+# Automated Fabric Defect Detection
+Fabric defect detection is a significant phase of quality control in textile industry. Manual defect inspection lacks the accuracy and the labor cost is high. Automating this process is challenging due to a large number of fabric types and defect types. Defect detection relies on the identification of regions that are different from the uniform background. Our intention is to develop a system to detect defects in uniform textured fabrics with Image Processing techniques and Neural Networks. The results indicated that the use of light beams based on the color of the material is more effective than the white light beam.
