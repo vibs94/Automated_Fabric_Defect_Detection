@@ -1,0 +1,7 @@
+.image_panel {
+    display: flex;
+    background-color: white;
+    min-width: 100%;
+    min-height: 200px;
+    overflow-x: auto;
+}

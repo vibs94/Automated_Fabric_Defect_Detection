@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="fabric-system-front-end">
+<head>
+    <meta charset="UTF-8">
+    <title>Fabric Defect Ditection</title>
+
+    <base href="/">
+
+    <!--Import CSS files-->
+    <link rel="stylesheet" href="src/vendor/css/bootstrap.min.css">
+    <link rel="stylesheet" href="src/vendor/css/font-awesome.min.css">
+    <link rel="stylesheet" href="src/assets/css/main.css">
+
+    <!--Import javascript framework files-->
+    <script src="src/vendor/js/jquery-3.2.1.min.js"></script>
+    <script src="src/vendor/js/bootstrap.min.js"></script>
+
+    <!--Import AnglerJS files -->
+    <script src="src/vendor/js/angular.min.js"></script>
+    <script src="src/vendor/js/angular-route.js"></script>
+    <script src="src/vendor/js/ngStorage.min.js"></script>
+    <script src="src/vendor/js/socket.io.js"></script>
+
+    <!--Angular modules, run, config files-->
+    <script src="src/app/app.modules.js"></script>
+    <script src="src/app/app.config.js"></script>
+    <script src="src/app/app.run.js"></script>
+
+    <!--Import AnglerJS Controllers -->
+    <script src="src/app/controller/main.controller.js"></script>
+    <script src="src/app/service/page.refresh.service.js"></script>
+    <script src="src/app/service/socket.service.js"></script>
+    <script src="src/app/directives/err.src.directive.js"></script>
+
+</head>
+<body ng-controller="MainController">
+    <div ng-view class="stretch-ng-view"></div>
+</body>
+</html>

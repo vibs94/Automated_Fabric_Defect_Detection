@@ -1,0 +1,6 @@
+fabric-system-back-end/node_modules
+fabric-system-back-end/.idea
+fabric-system-back-end/public/src/assets/images/trash
+fabric-system-back-end/public/src/assets/images/upload
+server_preprocessor/x64/Debug/opencv_world340d.dll
+server_preprocessor/x64/Debug/opencv_world340.dll
