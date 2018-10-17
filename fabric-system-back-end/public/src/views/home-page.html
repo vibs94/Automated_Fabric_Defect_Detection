@@ -1,0 +1,52 @@
+<div class="container" ng-init="onInit()">
+    <div style="width: 100%; border: 1px solid black; margin-top: 25px; padding: 20px; text-align: center">
+        <h3 style="margin-top: -10px">Control Panel [Online/Offline Flag]</h3>
+        <div style="width: 100%; border: 1px solid black; margin-top: 25px; padding: 20px; margin-bottom: 20px; text-align: center">
+            <p>
+                Status: Capturing &emsp;&emsp;&emsp;
+                Time: Capturing &emsp;&emsp;&emsp;
+                Number of pictures: Capturing &emsp;&emsp;&emsp;
+                Defect Count : Capturing
+            </p>
+        </div>
+        <input type="button" class="btn btn-success" ng-click="startCapture()" value="Start Capture">
+        <input type="button" class="btn btn-success" ng-click="stopCapture()" value="Stop Capture">
+    </div>
+    <div style="text-align: center">
+        <h3>Fabric Images [Captured]</h3>
+        <section class="image_panel">
+            <div style="height: 100%" ng-repeat="(key, item) in images">
+                <img ng-src="{{item.file}}" err-src="{{item.file}}" />
+                <!--<img src="src/assets/images/upload/sanna_js.jpg">-->
+            </div>
+        </section>
+    </div>
+    <div style="text-align: center; margin-bottom: 50px">
+        <h3>Fabric Images [Processed]</h3>
+        <section class="image_panel">
+            <div style="height: 100%" ng-repeat="(key, item) in images">
+                <img ng-src="{{item.file_processed}}"
+                     err-src="{{item.file_processed}}" style="margin-bottom: 10px"/>
+                <!--<img src="src/assets/images/upload/sanna_js.jpg" style="margin-bottom: 10px">-->
+                <p>Identifier: {{item.file_processed}}<br>
+                    Defect Count: {{item.defect_count}}
+                </p>
+                <p ng-repeat="(key, item) in item.defects" style="margin-bottom: -1px">
+                    Defect Category: {{item.name}} [Confidence: {{item.confidence}} %]
+                </p>
+            </div>
+        </section>
+    </div>
+    <div style="width: 100%; border: 1px solid black; margin-top: 25px; padding: 20px; text-align: center; margin-bottom: 50px">
+        <h3 style="margin-top: -10px">Statistics</h3>
+        <div style="width: 100%; border: 1px solid black; margin-top: 25px; padding: 20px; margin-bottom: 20px; text-align: center">
+            <p>
+                Sample: Capturing &emsp;&emsp;&emsp;
+                Sample: Capturing &emsp;&emsp;&emsp;
+                Sample of pictures: Capturing &emsp;&emsp;&emsp;
+                Sample Count : Capturing
+            </p>
+        </div>
+    </div>
+</div>
+
