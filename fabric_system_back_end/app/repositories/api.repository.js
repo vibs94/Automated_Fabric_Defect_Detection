@@ -1,7 +1,7 @@
 const { execFile } = require('child_process');
 const fs = require('fs');
 const request = require('request');
-const url = require('../config/config.js').system_url;
+const server_config = require('../config/config.js');
 
 module.exports = {
     get_batch_names: async function(callback){
@@ -28,7 +28,7 @@ module.exports = {
         try {
             await request({
                 method: 'GET',
-                url: url + route
+                url: server_config.system_url + route
             }, function (err, wit_res) {
                 if (err) {
                     return callback(500, {message: err});
@@ -44,17 +44,33 @@ module.exports = {
         }
     },
 
-    update_batch_folder: async function(callback){
+    light_panel: async function(switch_mood, callback){
+        //Fix start stop process route
+        let route = '/light_off';
+        if(switch_mood){route = '/light_on'}
         try {
             await request({
-                method: 'POST',
-                url: url + '/create_batch'
-            }, function (err) {
+                method: 'GET',
+                url: server_config.system_url + route
+            }, function (err, wit_res) {
                 if (err) {
                     return callback(500, {message: err});
                 }
-                return callback(200, {message: "Batch folder updated"});
+                if(switch_mood) {
+                    return callback(200, {message: "start request sent to the led_panels"});
+                }else{
+                    return callback(200, {message: "shut-down request sent to the led_panels"});
+                }
             });
+        }catch (ex){
+            return callback(500, {message: ex.toString()});
+        }
+    },
+    update_batch_folder: async function(folder_name, callback){
+        try {
+            //Change the folder name
+            server_config.system_upload_folder = folder_name;
+            return callback(200, {message: "Upload location changed: " + folder_name});
         }catch (ex){
             return callback(500, {message: ex.toString()});
         }
@@ -71,15 +87,9 @@ module.exports = {
             //Create the folder in the upload directory
             fs.mkdirSync(upload_path);
             try {
-                await request({
-                    method: 'POST',
-                    url: url + '/create_batch'
-                }, function (err, wit_res) {
-                    if (err) {
-                        return callback(500, {message: err});
-                    }
-                    return callback(200, {message: "batch created successfully"});
-                });
+                //Change the folder name
+                server_config.system_upload_folder = folder_name;
+                return callback(200, {message: "batch created successfully"});
             }catch (ex){
                 return callback(500, {message: ex.toString()});
             }
@@ -115,8 +125,11 @@ module.exports = {
         image = image.replace(/^data:image\/\w+;base64,/, "");
         image = image.replace(/ /g, '+');
 
+        //get the folder name
+        let upload_loc =  server_config.system_upload_folder;
+
         let decodedImage = new Buffer(image, 'base64');
-        let file_path = 'public/src/assets/images/upload/' + file_suffix + '/' +
+        let file_path = 'public/src/assets/images/upload/' + upload_loc + '/' +
             file_name + '_' + file_suffix + '.jpg';
 
         try {
@@ -167,9 +180,9 @@ module.exports = {
                     output: respond[2],
                 }, '', '');
             }
-            file_path = 'src/assets/images/upload/' + file_suffix + '/' +
+            file_path = 'src/assets/images/upload/' + upload_loc + '/' +
                 file_name + '_' + file_suffix + '.jpg';
-            let file_path_processed = 'src/assets/images/upload/' + file_suffix + '/' +
+            let file_path_processed = 'src/assets/images/upload/' + upload_loc + '/' +
                 file_name + '_' + file_suffix + '_processed.jpg';
             return callback(200, {
                 data: respond[1],

@@ -1,6 +1,24 @@
 const api_repository = require('./../repositories/api.repository');
 
 module.exports = {
+    turn_on_light: async function(req, res){
+        api_repository.light_panel(
+            true,
+            async function(status, message){
+                return res.status(status).json(message);
+            }
+        )
+    },
+
+    turn_off_light: async function(req, res){
+        api_repository.light_panel(
+            false,
+            async function(status, message){
+                return res.status(status).json(message);
+            }
+        )
+    },
+
     get_batch_names: async function(req,res){
         api_repository.get_batch_names(
             async function(status, message){
@@ -28,7 +46,14 @@ module.exports = {
     },
 
     update_batch_folder: async function(req,res){
+        if(typeof req.body==='undefined') {
+            return res.status(400).json({message: 'body data is required'});}
+        if(typeof req.body.data==='undefined' ||
+            req.body.data===''){
+            return res.status(400).json({message: 'data is required'});
+        }
         api_repository.update_batch_folder(
+            req.body.data,
             async function(status, message){
                 return res.status(status).json(message);
             }

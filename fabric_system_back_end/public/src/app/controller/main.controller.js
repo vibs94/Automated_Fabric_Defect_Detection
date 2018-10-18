@@ -25,7 +25,7 @@ app.controller('MainController', [
                 if(entry.file===obj.file){isExit = true;}
             });
             if(!isExit){$scope.images.push(obj)}
-            console.log($scope.images);
+            console.log("Image received through socket.io connection: success");
 
             setTimeout(function(){
                 $scope.$apply();}, 3000);
@@ -46,7 +46,7 @@ app.controller('MainController', [
                     method: "GET",
                     url: host_url + "get_images?batch_name=" + data
                 });
-                console.log(result);
+                //console.log(result);
                 if (result.status === 200) {
                     let images_arr = result.data.files.images;
                     let processed_images_arr = result.data.files.processed_images;
@@ -61,12 +61,14 @@ app.controller('MainController', [
                         };
                         $scope.images.push(obj);
                     }
-                    console.log($scope.images);
+                    //console.log($scope.images);
                     $scope.$apply();
                 }
             }catch (err){
                 console.log(err);
                 showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
+                $location.path( "/home" );
+                $scope.$apply();
             }
         };
 
@@ -101,7 +103,7 @@ app.controller('MainController', [
                     data: 'data=' + data,
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                 });
-                console.log(result);
+                //console.log(result);
                 $location.path( "/process" );
                 $scope.$apply();
 
@@ -117,7 +119,7 @@ app.controller('MainController', [
                     method: "GET",
                     url: host_url + "start_capture"
                 });
-                console.log(result);
+                //console.log(result);
             }catch (err){
                 console.log(err);
                 showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
@@ -130,7 +132,7 @@ app.controller('MainController', [
                     method: "GET",
                     url: host_url + "stop_capture"
                 });
-                console.log(result);
+                //console.log(result);
             }catch (err){
                 console.log(err);
                 showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
@@ -144,7 +146,7 @@ app.controller('MainController', [
                     url: host_url + "turn_off_light",
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                 });
-                console.log(result);
+                //console.log(result);
             }catch (err){
                 console.log(err);
                 showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
@@ -181,7 +183,7 @@ app.controller('MainController', [
                         data: 'data=' + data,
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                     });
-                    console.log(result);
+                    //console.log(result);
                 }catch (err){
                     console.log(err);
                     showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
@@ -207,7 +209,7 @@ app.controller('MainController', [
                         data: 'data=' + data,
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                     });
-                    console.log(result);
+                    //console.log(result);
                     let obj = {
                         file_name: data};
                     $scope.batch_names.push(obj);
