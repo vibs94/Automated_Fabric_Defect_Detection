@@ -1,9 +1,11 @@
 app.controller('MainController', [
-    '$scope','$http','host_url', function($scope, $http,host_url){
+    '$scope','$http','host_url', '$location', 'PageRefreshService',
+    function($scope, $http,host_url, $location, PageRefreshService){
         $scope.images = [];
+        $scope.batch_names = [];
 
         let socket = io.connect('http://localhost:3000');
-        showErrorMessage = function(message){alert(message);};
+        let showErrorMessage = function(message){alert(message);};
 
         socket.on('fabric_defect_server', function(msg){
             let file_path = msg.path;
@@ -29,11 +31,20 @@ app.controller('MainController', [
                 $scope.$apply();}, 3000);
         });
 
-        $scope.onInit =  async function(){
+        $scope.getImages = async function(){
+            //Get selected batch name
+            let data = PageRefreshService.getCurrenBatchName();
+            console.log('Current upload folder is set to: ' + data);
+
+            if(typeof data==='undefined'){
+                $location.path( "/home" );
+                return;
+            }
+
             try {
                 let result = await $http({
                     method: "GET",
-                    url: host_url + "get_images"
+                    url: host_url + "get_images?batch_name=" + data
                 });
                 console.log(result);
                 if (result.status === 200) {
@@ -53,6 +64,47 @@ app.controller('MainController', [
                     console.log($scope.images);
                     $scope.$apply();
                 }
+            }catch (err){
+                console.log(err);
+                showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
+            }
+        };
+
+        $scope.onInit =  async function(){
+            try {
+                let result = await $http({
+                    method: "GET",
+                    url: host_url + "get_batch_names"
+                });
+                if (result.status === 200) {
+                    let files_arr = result.data.files;
+                    for(let i=0; i<files_arr.length; i++){
+                        let obj = {
+                            file_name: files_arr[i]};
+                        $scope.batch_names.push(obj);
+                    }
+                    $scope.$apply();
+                }
+            }catch (err){
+                console.log(err);
+                showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
+            }
+        };
+
+        $scope.openHistory = async function(index){
+            let data = $scope.batch_names[index].file_name;
+            PageRefreshService.updateCurrentBatchName(data);
+            try {
+                let result = await $http({
+                    method: "POST",
+                    url: host_url + "update_batch_folder",
+                    data: 'data=' + data,
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                });
+                console.log(result);
+                $location.path( "/process" );
+                $scope.$apply();
+
             }catch (err){
                 console.log(err);
                 showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
@@ -147,6 +199,7 @@ app.controller('MainController', [
             }
             if(isError){
                 let data =  $scope.batch_name;
+                PageRefreshService.updateCurrentBatchName(data);
                 try {
                     let result = await $http({
                         method: "POST",
@@ -155,7 +208,12 @@ app.controller('MainController', [
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                     });
                     console.log(result);
-                    //Should show the error message that batch already exist
+                    let obj = {
+                        file_name: data};
+                    $scope.batch_names.push(obj);
+
+                    $location.path( "/process" );
+                    $scope.$apply();
                 }catch (err){
                     console.log(err);
                     showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);

@@ -1,57 +1,50 @@
 const api_controller = require('./../../controller/api.controller');
-const request = require('request');
-let url = 'https://3e451c16.ngrok.io';
 
 module.exports = function (router) {
     router.post('/post', function(req,res) {
-        console.log(req.body);
-        return res.status(200).send("testing");
+        return res.status(200).send("server test route for post method");
     });
-
     router.get('/get', function(req,res) {
-        return res.status(200).send("testing");
+        return res.status(200).send("server test route for get method");
     });
 
     router.post('/turn_on_light', function(req,res) {
         return res.status(200).send("testing");
     });
-
     router.post('/turn_off_light', function(req,res) {
         return res.status(200).send("testing");
     });
 
-    router.post('/create_batch', function(req,res) {
-        return res.status(200).send("testing");
-    });
-
-    router.get('/start_capture', async function(req,res) {
-        try {
-            await request({
-                method: 'GET',
-                url: url + '/start'
-            }, function (err, wit_res) {
-                if (err) {
-                    return res.json(500, {message: err});
-                }
-                return res.json(200, {data: JSON.parse(wit_res.body)});
-            });
-        }catch (ex){
-            return res.json(500, {data: ex.toString()});
+    router.post(
+        '/update_batch_folder',
+        async function(req,res) {
+            api_controller.update_batch_folder(req,res);
         }
-    });
-    router.get('/stop_capture', async function(req,res) {
-        try {
-            await request({
-                method: 'GET',
-                url: url + '/stop'
-            }, function (err, wit_res) {
-                if (err) {return res.json(500,{message: err});}
-                return res.json(200,{data: JSON.parse(wit_res.body)});
-            });
-        }catch (ex){
-            return res.json(500, {data: ex.toString()});
+    );
+    router.post(
+        '/create_batch',
+        async function(req,res) {
+            api_controller.create_batch(req,res);
         }
-    });
+    );
+    router.get(
+        '/get_batch_names',
+        async function(req,res) {
+            api_controller.get_batch_names(req,res);
+        }
+    );
+    router.get(
+        '/start_capture',
+        async function(req,res) {
+            api_controller.start_capture(req,res);
+        }
+    );
+    router.get(
+        '/stop_capture',
+        async function(req,res) {
+            api_controller.stop_capture(req,res);
+        }
+    );
     router.get(
         '/get_images',
         async function(req, res, next){
