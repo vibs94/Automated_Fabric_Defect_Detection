@@ -12,6 +12,18 @@ module.exports = function (router) {
         return res.status(200).send("testing");
     });
 
+    router.post('/turn_on_light', function(req,res) {
+        return res.status(200).send("testing");
+    });
+
+    router.post('/turn_off_light', function(req,res) {
+        return res.status(200).send("testing");
+    });
+
+    router.post('/create_batch', function(req,res) {
+        return res.status(200).send("testing");
+    });
+
     router.get('/start_capture', async function(req,res) {
         try {
             await request({

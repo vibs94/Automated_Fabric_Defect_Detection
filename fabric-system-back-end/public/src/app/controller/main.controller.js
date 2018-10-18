@@ -3,6 +3,7 @@ app.controller('MainController', [
         $scope.images = [];
 
         let socket = io.connect('http://localhost:3000');
+        showErrorMessage = function(message){alert(message);};
 
         socket.on('fabric_defect_server', function(msg){
             let file_path = msg.path;
@@ -54,6 +55,7 @@ app.controller('MainController', [
                 }
             }catch (err){
                 console.log(err);
+                showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
             }
         };
 
@@ -66,6 +68,7 @@ app.controller('MainController', [
                 console.log(result);
             }catch (err){
                 console.log(err);
+                showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
             }
         };
 
@@ -78,6 +81,85 @@ app.controller('MainController', [
                 console.log(result);
             }catch (err){
                 console.log(err);
+                showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
             }
         };
+
+        $scope.lightOff = async function(){
+            try {
+                let result = await $http({
+                    method: "POST",
+                    url: host_url + "turn_off_light",
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                });
+                console.log(result);
+            }catch (err){
+                console.log(err);
+                showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
+            }
+        };
+
+        $scope.lightOn = async function(){
+            let isError = true;
+            if(typeof $scope.input_red === 'undefined' ||
+                $scope.input_red.replace(' ', '') === ''){
+                showErrorMessage("Red color cannot left blank or invalid value!");
+                let isError = false;
+                return;
+            }
+            if(typeof $scope.input_green === 'undefined' ||
+                $scope.input_green.replace(' ', '') === ''){
+                showErrorMessage("Green color cannot left blank or invalid value!");
+                let isError = false;
+                return;
+            }
+            if(typeof $scope.input_blue === 'undefined' ||
+                $scope.input_blue.replace(' ', '') === ''){
+                showErrorMessage("Blue color cannot left blank or invalid value!");
+                let isError = false;
+                return;
+            }
+            if(isError){
+                let data =  $scope.input_red + ' ' + $scope.input_green
+                    + ' ' + $scope.input_blue;
+                try {
+                    let result = await $http({
+                        method: "POST",
+                        url: host_url + "turn_on_light",
+                        data: 'data=' + data,
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                    });
+                    console.log(result);
+                }catch (err){
+                    console.log(err);
+                    showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
+                }
+            }
+        };
+
+        $scope.createBatch = async function(){
+            let isError = true;
+            if(typeof $scope.batch_name === 'undefined' ||
+                $scope.batch_name.replace(' ', '') === ''){
+                showErrorMessage("Batch name cannot left blank or invalid value!");
+                let isError = false;
+                return;
+            }
+            if(isError){
+                let data =  $scope.batch_name;
+                try {
+                    let result = await $http({
+                        method: "POST",
+                        url: host_url + "create_batch",
+                        data: 'data=' + data,
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                    });
+                    console.log(result);
+                    //Should show the error message that batch already exist
+                }catch (err){
+                    console.log(err);
+                    showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
+                }
+            }
+        }
 }]);
