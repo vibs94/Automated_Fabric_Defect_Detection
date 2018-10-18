@@ -1,6 +1,7 @@
 const api_controller = require('./../../controller/api.controller');
 
 module.exports = function (router) {
+    //Test routes for connection, ngrok testing post, get requests
     router.post('/post', function(req,res) {
         return res.status(200).send("server test route for post method");
     });
@@ -8,13 +9,19 @@ module.exports = function (router) {
         return res.status(200).send("server test route for get method");
     });
 
-    router.post('/turn_on_light', function(req,res) {
-        return res.status(200).send("testing");
-    });
-    router.post('/turn_off_light', function(req,res) {
-        return res.status(200).send("testing");
-    });
-
+    //Back-end server routes
+    router.post(
+        '/turn_on_light',
+        async function(req,res) {
+            api_controller.turn_on_light(req,res);
+        }
+    );
+    router.post(
+        '/turn_off_light',
+        async function(req,res) {
+            api_controller.turn_off_light(req,res);
+        }
+    );
     router.post(
         '/update_batch_folder',
         async function(req,res) {
