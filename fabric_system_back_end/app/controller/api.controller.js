@@ -28,6 +28,7 @@ module.exports = {
     turn_off_light: async function(req, res){
         api_repository.light_panel(
             false,
+            0,0,0,  //Set RGB color to black
             async function(status, message){
                 return res.status(status).json(message);
             }
