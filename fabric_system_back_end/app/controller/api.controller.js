@@ -2,8 +2,23 @@ const api_repository = require('./../repositories/api.repository');
 
 module.exports = {
     turn_on_light: async function(req, res){
+        if(typeof req.body==='undefined') {
+            return res.status(400).json({message: 'body data is required'});}
+        if(typeof req.body.r==='undefined' ||
+            req.body.r===''){
+            return res.status(400).json({message: 'r is required'});
+        }
+        if(typeof req.body.g==='undefined' ||
+            req.body.g===''){
+            return res.status(400).json({message: 'g is required'});
+        }
+        if(typeof req.body.b==='undefined' ||
+            req.body.b===''){
+            return res.status(400).json({message: 'b is required'});
+        }
         api_repository.light_panel(
             true,
+            req.body.r, req.body.g, req.body.b,
             async function(status, message){
                 return res.status(status).json(message);
             }

@@ -119,7 +119,7 @@ app.controller('MainController', [
                     method: "GET",
                     url: host_url + "start_capture"
                 });
-                //console.log(result);
+                console.log(result);
             }catch (err){
                 console.log(err);
                 showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
@@ -174,13 +174,12 @@ app.controller('MainController', [
                 return;
             }
             if(isError){
-                let data =  $scope.input_red + ' ' + $scope.input_green
-                    + ' ' + $scope.input_blue;
                 try {
                     let result = await $http({
                         method: "POST",
                         url: host_url + "turn_on_light",
-                        data: 'data=' + data,
+                        data: 'data=' + $scope.input_red + '&blue=' + $scope.input_blue + 
+                                '&green=' + $scope.input_green,
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                     });
                     //console.log(result);
