@@ -9,18 +9,25 @@ class Process:
 	
 	check = 1
 	count = 0
-	url = "https://edc1cfc0.ngrok.io"
+	url = "https://93a03f6e.ngrok.io"
+
+	#Camera object
+	camera = Camera()
+	
 	productLine = ProductLine()
 
 	def _init_(self):
                 Process.check = 1
                 Process.count = 0
+                
+                #Initialize camera object
+                Process.camera = Camera()
                 Process.productLine = ProductLine()
 
 	def run(self):
 		while(Process.check == 1):
 			print("=============================================== Running ===============================================")
-			image, folder_name, file_name = Process.productLine.getImage()
+			image, folder_name, file_name = Process.productLine.getImage(Process.camera)
 			time.sleep(1)
 			image_base64 = base64.b64encode(image)
 			file_name = "Cloth_frame_"+str(Process.count)
