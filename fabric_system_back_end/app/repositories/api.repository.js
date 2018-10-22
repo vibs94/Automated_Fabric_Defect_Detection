@@ -29,14 +29,14 @@ module.exports = {
             await request({
                 method: 'GET',
                 url: server_config.system_url + route
-            }, function (err, wit_res) {
+            }, function (err, data) {
                 if (err) {
                     return callback(500, {message: err});
                 }
                 if(is_begin) {
-                    return callback(200, {message: "Capture process started"});
+                    return callback(200, {message: "Capture process started, " + data.body.toString()});
                 }else{
-                    return callback(200, {message: "Capture process stopped"});
+                    return callback(200, {message: "Capture process stopped, " + data.body.toString()});
                 }
             });
         }catch (ex){
@@ -44,10 +44,10 @@ module.exports = {
         }
     },
 
-    light_panel: async function(switch_mood, callback){
+    light_panel: async function(switch_mood, red, green, blue, callback){
         //Fix start stop process route
         let route = '/light_off';
-        if(switch_mood){route = '/light_on'}
+        if(switch_mood){route = '/light_on?r=' + red + '&g=' + green + '&b=' + blue;}
         try {
             await request({
                 method: 'GET',
