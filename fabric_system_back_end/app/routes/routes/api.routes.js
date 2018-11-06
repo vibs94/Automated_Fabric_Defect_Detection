@@ -9,6 +9,20 @@ module.exports = function (router) {
         return res.status(200).send("server test route for get method");
     });
 
+    //Dummy Testing Route For Python Scripts
+    router.get('/test_python_script', async function(req,res) {
+        const repo = require('./../../repositories/api.repository');
+        console.log(req.query.first_name);
+        console.log(req.query.last_name);
+        await repo.test_python_script(
+            req.query.first_name,
+            req.query.last_name,
+            function(result){
+                return res.status(200).json(result);
+            }
+        )
+    });
+
     //Back-end server routes
     router.post(
         '/turn_on_light',
