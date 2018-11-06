@@ -4,6 +4,20 @@ const request = require('request');
 const server_config = require('../config/config.js');
 
 module.exports = {
+    test_python_script: async function(first_name, last_name, callback){
+        let execFilePath = './public/src/assets/files/classifier/sample.py';
+
+        let respond = await execFile('python', [
+            execFilePath, "prasanna", "Deshappriy"
+        ]);
+        
+        await respond.stdout.on('data', function(data) {
+            json_data = JSON.parse(data);
+            console.log(json_data);
+            return callback(json_data);
+        } )     
+    },
+
     get_batch_names: async function(callback){
         try{
             const image_uploaded_folder = './public/src/assets/images/upload/';
