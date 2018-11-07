@@ -4,18 +4,35 @@ const request = require('request');
 const server_config = require('../config/config.js');
 
 module.exports = {
-    test_python_script: async function(first_name, last_name, callback){
-        let execFilePath = './public/src/assets/files/classifier/sample.py';
+    classify_image: async function(image, labelbin, model, callback){
+        let execFilePath = './public/src/assets/files/classifier/classify.py';
+        let python = 'C:/Python/Python36/python.exe';
 
-        let respond = await execFile('python', [
-            execFilePath, "prasanna", "Deshappriy"
-        ]);
-        
-        await respond.stdout.on('data', function(data) {
-            json_data = JSON.parse(data);
-            console.log(json_data);
-            return callback(json_data);
-        } )     
+        let respond = await execFile(
+            python, 
+            [
+                execFilePath, 
+                '--model', model, 
+                '--labelbin', labelbin,
+                '--image', image
+            ], 
+            async function(err, stdout, stderr){
+                if(err){
+                    console.log(err);
+                    return callback(500, {message: err});
+                }
+                console.log('-------------Classification Results---------------');
+                console.log('stdout:');
+                console.log(stdout);
+                console.log('stderror:');
+                console.log(stderr);
+                console.log('--------------------------------------------------');
+                return callback(200,{
+                    message: stdout,
+                    error_log: stderr
+                })
+            }
+        );
     },
 
     get_batch_names: async function(callback){
