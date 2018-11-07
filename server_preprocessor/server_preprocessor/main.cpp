@@ -12,7 +12,7 @@ const int DEBUG_MODE = 0;
 
 //Default values
 const double DEFAULT_GAMMA_VALUE = 1.10;
-const std::string DEFAULT_PATH = "E://sample1.jpg";
+const std::string DEFAULT_PATH = "G://Final Year Project Development//Release 03//sample.jpg";
 const int DEFAULT_COLOR_RANGE = 15;
 
 //0 - COLORMAP_BONE,
@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
 		image_processor processor;
 
 		cv::Mat image = processor.openImage(_arg_path);
-
+		
 		if (_color_map < 4) {
 			// Apply the colormap:
 			cv::applyColorMap(image, image, color_map[_color_map]);
@@ -111,7 +111,6 @@ int main(int argc, char* argv[]) {
 		
 		//Apply Gamma Correction
 		image = processor.applyGammaCorrection(image, _gamma_value);
-		//processor.viewImage(image, "Color Map");
 
 		//Apply Morphology Operations
 		image = processor.erodeImage(image, _erode_range);
@@ -123,7 +122,7 @@ int main(int argc, char* argv[]) {
 		color_range_rgb.at(2) = _color_range;
 		cv::Mat threshold_image =
 			processor.removeBackground(image, color_range_rgb, allow_bitwise_not);
-
+		
 		if (allow_morphology) {
 			threshold_image = processor.erodeImage(threshold_image, _erode_range);
 			threshold_image = processor.dilateImage(threshold_image, _dilate_range);
@@ -144,7 +143,7 @@ int main(int argc, char* argv[]) {
 
 		threshold_image = processor.erodeImage(threshold_image, _erode_range);
 		threshold_image = processor.dilateImage(threshold_image, _dilate_range);
-
+		
 		if (allow_display_result) {
 			processor.viewImage(threshold_image, "Result Image");
 		}
