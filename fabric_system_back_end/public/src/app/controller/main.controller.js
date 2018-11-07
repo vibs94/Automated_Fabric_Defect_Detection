@@ -1,10 +1,9 @@
 app.controller('MainController', [
-    '$scope','$http','host_url', '$location', 'PageRefreshService',
-    function($scope, $http,host_url, $location, PageRefreshService){
+    '$scope','$http','host_url', '$location', 'PageRefreshService', 'socket',
+    function($scope, $http,host_url, $location, PageRefreshService, socket){
         $scope.images = [];
         $scope.batch_names = [];
-
-        let socket = io.connect('http://localhost:3000');
+        
         let showErrorMessage = function(message){alert(message);};
 
         socket.on('fabric_defect_server', function(msg){
@@ -178,8 +177,8 @@ app.controller('MainController', [
                     let result = await $http({
                         method: "POST",
                         url: host_url + "turn_on_light",
-                        data: 'data=' + $scope.input_red + '&blue=' + $scope.input_blue + 
-                                '&green=' + $scope.input_green,
+                        data: 'r=' + $scope.input_red + '&b=' + $scope.input_blue + 
+                                '&g=' + $scope.input_green,
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                     });
                     //console.log(result);
