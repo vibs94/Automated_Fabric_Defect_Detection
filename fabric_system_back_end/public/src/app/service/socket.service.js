@@ -4,8 +4,8 @@
 
 'use strict';
 angular.module('fabric-system-front-end')
-    .factory('socket', 'socket_server_url', 
-    function ($rootScope, socket, socket_server_url) {
+    .factory('socket', 
+    function ($rootScope, socket_server_url) {
         console.log("Socket connect to: " + socket_server_url);
         var socket = io.connect(socket_server_url);
         return {
