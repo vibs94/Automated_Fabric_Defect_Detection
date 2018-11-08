@@ -62,8 +62,16 @@ module.exports = {
     },
 
     start_capture: async function(req, res){
+        if(typeof req.query==='undefined') {
+            return res.status(400).json({message: 'query data is required'});}
+        if(typeof req.query.isAutomatic==='undefined' ||
+            req.query.isAutomatic===''){
+            return res.status(400).json({message: 'isAutomatic is required'});
+        }
+        let isAutomatic = req.query.isAutomatic;
         api_repository.capture(
             true,
+            isAutomatic,
             async function(status, message){
                 return res.status(status).json(message);
             }
@@ -72,6 +80,7 @@ module.exports = {
 
     stop_capture: async function(req, res){
         api_repository.capture(
+            false,
             false,
             async function(status, message){
                 return res.status(status).json(message);
@@ -143,9 +152,9 @@ module.exports = {
             req.body.encode_str,
             req.body.file_name,
             req.body.file_suffix,
-            async function (status, message, path, processed_path) {
+            async function (status, message, path, processed_path, classify_results) {
                 let data = {
-                    path: path, processed_path: processed_path};
+                    path: path, processed_path: processed_path, classify_results: classify_results};
                 io.emit('fabric_defect_server', data);
                 return res.status(status).json(message);
             }

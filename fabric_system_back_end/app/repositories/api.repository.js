@@ -6,7 +6,10 @@ const server_config = require('../config/config.js');
 module.exports = {
     classify_image: async function(image, labelbin, model, callback){
         let execFilePath = './public/src/assets/files/classifier/classify.py';
-        let python = 'C:/Python/Python36/python.exe';
+        //let python = 'C:/Python/Python36/python.exe';
+        
+        //Python exe file location in server pc
+        let python = 'C:/Users/Administrator/AppData/Local/Programs/Python/Python36/python.exe';
 
         let image_path = './public/src/assets/files/classifier/examples/' + image + '.jpg';
         if (!fs.existsSync(image_path)) {
@@ -59,10 +62,12 @@ module.exports = {
         }
     },
 
-    capture: async function(is_begin, callback){
+    capture: async function(is_begin, isAutomatic, callback){
         //Fix start stop process route
         let route = '/stop';
-        if(is_begin){route = '/start'}
+        if(is_begin){
+            route = '/start?isAutomatic=' + isAutomatic;
+        }
         try {
             await request({
                 method: 'GET',
@@ -193,7 +198,7 @@ module.exports = {
             //      [color_range]
             //      [Gamma (leave blank will set gamma = 1.1)]1.1
 
-            let respond = await execFile(
+            await execFile(
                 execFilePath,
                 [
                     file_path,      //file_name
@@ -210,25 +215,56 @@ module.exports = {
                                     //      4 - Don't Apply Color Map
                     '20',           //color_range
                     '1.1'           //Gamma (leave blank will set gamma = 1.1)
-                ]
+                ],
+                async function(err, stdout, stderr){
+                    if(err){
+                        console.log(err);
+                        return callback(500, {
+                            message: err,
+                            std_err: stderr
+                        }, '', '', {});
+                    }
+                    
+                    file_path = 'src/assets/images/upload/' + upload_loc + '/' +
+                                                file_name + '_' + file_suffix + '.jpg';
+                    let file_path_processed = 'src/assets/images/upload/' + upload_loc + '/' +
+                                                file_name + '_' + file_suffix + '_processed.jpg';
+                    let classify_path = './public/' + file_path_processed;
+                    console.log(classify_path);
+
+                    await execFile(
+                        server_config.server_python_path, 
+                        [
+                            server_config.classifier_path, 
+                            '--image', classify_path
+                        ], 
+                        async function(err, stdout, stderr){
+                            if(err){
+                                console.log(err);
+                                return callback(500, {
+                                    message: err,
+                                    std_err: stderr
+                                }, '', '', {});
+                            }
+                            console.log('-------------Classification Results---------------');
+                            let response = JSON.parse(stdout);
+                            console.log(response);
+                            console.log('stderror:');
+                            console.log(stderr);
+                            console.log('--------------------------------------------------');
+
+                            
+                            return callback(200, {
+                                message: stdout,
+                                std_err: stderr,
+                                message: "process completed: " + file_path_processed
+                            }, file_path, file_path_processed, response);
+                        }
+                    );
+                }
             );
-            if (respond[0]) {
-                return callback(500, {
-                    data: respond[1],
-                    output: respond[2],
-                }, '', '');
-            }
-            file_path = 'src/assets/images/upload/' + upload_loc + '/' +
-                file_name + '_' + file_suffix + '.jpg';
-            let file_path_processed = 'src/assets/images/upload/' + upload_loc + '/' +
-                file_name + '_' + file_suffix + '_processed.jpg';
-            return callback(200, {
-                data: respond[1],
-                output: respond[2],
-                message: "process completed: " + file_path_processed
-            }, file_path, file_path_processed);
         }catch (ex){
-            return callback(500, {message: ex.toString()});
+            return callback(500, {message: ex.toString()}, '', '', {});
         }
     },
 

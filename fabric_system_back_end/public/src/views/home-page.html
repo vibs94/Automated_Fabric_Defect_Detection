@@ -33,21 +33,25 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-4" ng-style="{'pointer-events': pointer_events_red, 'opacity': opacity_red}">
+                    <div class="col-lg-4" ng-style="{'pointer-events': pointer_events, 'opacity': opacity}">
                         <label for="redColor" class="control-label d">Red [0-255]</label>
                         <input type="text" id="redColor" ng-model="input_red"  class="form-control">
                     </div>
-                    <div class="col-lg-4" ng-style="{'pointer-events': pointer_events_green, 'opacity': opacity_green}">
+                    <div class="col-lg-4" ng-style="{'pointer-events': pointer_events, 'opacity': opacity}">
                         <label for="greenColor" class="control-label">Green [0-255]</label>
                         <input type="text" id="greenColor" ng-model="input_green" class="form-control">
                     </div>
-                    <div class="col-lg-4" ng-style="{'pointer-events': pointer_events_blue, 'opacity': opacity_blue}">
+                    <div class="col-lg-4" ng-style="{'pointer-events': pointer_events, 'opacity': opacity}">
                         <label for="blueColor" class="control-label">Blue [0-255]</label>
                         <input type="text" id="blueColor" ng-model="input_blue" class="form-control">
                     </div>
                 </div>
-                <input type="button" class="btn btn-default" value="Turn On" ng-click="lightOn()" style="margin-top: 15px; width: 150px">
-                <input type="button" class="btn btn-default" value="Turn Off"  ng-click="lightOff()" style="margin-top: 15px; width: 150px">
+                <input type="button" class="btn btn-default" 
+                        value="Turn On" ng-click="lightOn()" style="margin-top: 15px; width: 150px"
+                        ng-style="{'pointer-events': pointer_events, 'opacity': opacity}">
+                <input type="button" class="btn btn-default" 
+                        value="Turn Off"  ng-click="lightOff()" style="margin-top: 15px; width: 150px"
+                        ng-style="{'pointer-events': pointer_events, 'opacity': opacity}">
             </div>
 
             <h4 style="font-weight: bold; ">Prevously Added</h4>
