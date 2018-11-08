@@ -1,31 +1,33 @@
-<div class="container" ng-init="getImages()">
-    <div style="width: 100%; border: 1px solid black; margin-top: 25px; padding: 20px; text-align: center">
-        <h3 style="margin-top: -10px">Control Panel [Online/Offline Flag]</h3>
-        <div style="width: 100%; border: 1px solid black; margin-top: 25px; padding: 20px; margin-bottom: 20px; text-align: center">
+<div class="container" ng-init="getImages()" style="font-family:Questrial">
+    <div style="width: 100%; margin-top: 25px; padding: 20px; text-align: center" class="panel panel-default">
+        <div class=""><h4 style="margin-top: -10px">Control Panel</h4></div>
+        <div><a href="/home" class="btn btn-default" style="width: 120px; float: left">Back</a></div>
+            <input type="button" class="btn btn-success" ng-click="startCapture()" style="width: 120px; margin-left: -120px" value="Start Capture">
+            <input type="button" class="btn btn-danger " ng-click="stopCapture()" style="width: 120px" value="Stop Capture">
+
+        <div style="width: 100%;  margin-top: 25px; padding: 20px; margin-bottom: 20px; text-align: center">
             <p>
-                Status: Capturing &emsp;&emsp;&emsp;
-                Time: Capturing &emsp;&emsp;&emsp;
-                Number of pictures: Capturing &emsp;&emsp;&emsp;
-                Defect Count : Capturing
+                <b>Status : </b> Capturing &emsp;&emsp;&emsp;
+                <b>Time :</b> 00:02:31 &emsp;&emsp;&emsp;
+                <b>Number of images :</b> 74 &emsp;&emsp;&emsp;
+                <b>Defects count :</b> 48
             </p>
         </div>
-        <input type="button" class="btn btn-success" ng-click="startCapture()" style="width: 120px" value="Start Capture">
-        <input type="button" class="btn btn-success" ng-click="stopCapture()" style="width: 120px" value="Stop Capture">
-        <a href="/home" class="btn btn-danger" style="width: 120px">Back</a>
+
     </div>
     <div style="text-align: center">
-        <h3>Fabric Images [Captured]</h3>
+        <h4>Captured Image Feed</h4>
         <section class="image_panel">
-            <div style="height: 100%" ng-repeat="(key, item) in images">
+            <div style="height: 50%" ng-repeat="(key, item) in images">
                 <img ng-src="{{item.file}}" err-src="{{item.file}}" />
                 <!--<img src="src/assets/images/upload/sanna_js.jpg">-->
             </div>
         </section>
     </div>
     <div style="text-align: center; margin-bottom: 50px">
-        <h3>Fabric Images [Processed]</h3>
+        <h4>Processed Image Feed</h4>
         <section class="image_panel">
-            <div style="height: 100%" ng-repeat="(key, item) in images">
+            <div style="height: 50%" ng-repeat="(key, item) in images">
                 <img ng-src="{{item.file_processed}}"
                      err-src="{{item.file_processed}}" style="margin-bottom: 10px"/>
                 <!--<img src="src/assets/images/upload/sanna_js.jpg" style="margin-bottom: 10px">-->
@@ -38,14 +40,14 @@
             </div>
         </section>
     </div>
-    <div style="width: 100%; border: 1px solid black; margin-top: 25px; padding: 20px; text-align: center; margin-bottom: 50px">
-        <h3 style="margin-top: -10px">Statistics</h3>
-        <div style="width: 100%; border: 1px solid black; margin-top: 25px; padding: 20px; margin-bottom: 20px; text-align: center">
+    <div style="width: 100%; margin-top: 25px; padding: 20px; text-align: center; margin-bottom: 50px" class="panel panel-default">
+        <h4 style="margin-top: -10px">Statistics</h4>
+        <div style="width: 100%; margin-top: 25px; padding: 20px; margin-bottom: 20px; text-align: center">
             <p>
-                Sample: Capturing &emsp;&emsp;&emsp;
-                Sample: Capturing &emsp;&emsp;&emsp;
-                Sample of pictures: Capturing &emsp;&emsp;&emsp;
-                Sample Count : Capturing
+
+                <b>Total number of images :</b> 156 &emsp;&emsp;&emsp;
+                <b>Total defects count :</b> 123 &emsp;&emsp;&emsp;
+                <b>Average defects per image  :</b> 1.3 &emsp;&emsp;&emsp;
             </p>
         </div>
     </div>
