@@ -62,8 +62,26 @@ module.exports = {
     },
 
     start_capture: async function(req, res){
+        if(typeof req.query==='undefined') {
+            return res.status(400).json({message: 'query data is required'});}
+        if(typeof req.query.isAutomatic==='undefined' ||
+            req.query.isAutomatic===''){
+            return res.status(400).json({message: 'isAutomatic is required'});
+        }
+        if(typeof req.query.batch==='undefined' ||
+            req.query.batch===''){
+            return res.status(400).json({message: 'batch is required'});
+        }
+        if(typeof req.query.index==='undefined' ||
+            req.query.index===''){
+            return res.status(400).json({message: 'index is required'});
+        }
+        let isAutomatic = req.query.isAutomatic;
+        let index = req.query.index;
+        let batch = req.query.batch;
         api_repository.capture(
             true,
+            isAutomatic, index, batch, 
             async function(status, message){
                 return res.status(status).json(message);
             }
@@ -73,6 +91,7 @@ module.exports = {
     stop_capture: async function(req, res){
         api_repository.capture(
             false,
+            false, 0, '',
             async function(status, message){
                 return res.status(status).json(message);
             }
@@ -143,9 +162,9 @@ module.exports = {
             req.body.encode_str,
             req.body.file_name,
             req.body.file_suffix,
-            async function (status, message, path, processed_path) {
+            async function (status, message, path, processed_path, classify_results) {
                 let data = {
-                    path: path, processed_path: processed_path};
+                    path: path, processed_path: processed_path, classify_results: classify_results};
                 io.emit('fabric_defect_server', data);
                 return res.status(status).json(message);
             }

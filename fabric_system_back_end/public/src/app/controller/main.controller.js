@@ -2,33 +2,26 @@ app.controller('MainController', [
     '$scope','$http','host_url', '$location', 'PageRefreshService', 'socket',
     function($scope, $http,host_url, $location, PageRefreshService, socket){
         //Initialize variables
-        $scope.pointer_events_red = 'none';
-        $scope.pointer_events_green = 'none';
-        $scope.pointer_events_blue = 'none';
-        $scope.opacity_red = '0.4';
-        $scope.opacity_green = '0.4';
-        $scope.opacity_blue = '0.4';
+        $scope.pointer_events = 'none';
+        $scope.opacity = '0.4';        
 
-        let isAutomatic = true;
+        let isAutomatic = PageRefreshService.getIsAutomatic();
+
         $scope.updateIsAutomatic = function(condition){
             if(condition){
                 console.log("LED panels are set to automatic configurations");
                 setFields('none', '0.4');
-                isAutomatic = true;
+                isAutomatic = PageRefreshService.setIsAutomatic("1");
             }else{
                 console.log("LED panels are set to manual configurations");
                 setFields('auto', '1');
-                isAutomatic = false;
+                isAutomatic = PageRefreshService.setIsAutomatic("0");
             }
         }
 
         setFields = function(opinter_event, opacity){
-            $scope.pointer_events_red = opinter_event;
-            $scope.pointer_events_green = opinter_event;
-            $scope.pointer_events_blue = opinter_event;
-            $scope.opacity_red = opacity;
-            $scope.opacity_green = opacity;
-            $scope.opacity_blue = opacity;
+            $scope.pointer_events = opinter_event;
+            $scope.opacity = opacity;
         }
 
         $scope.images = [];
@@ -39,14 +32,37 @@ app.controller('MainController', [
         socket.on('fabric_defect_server', function(msg){
             let file_path = msg.path;
             let file_path_processed = msg.processed_path;
+            let classify_results = msg.classify_results;
+            console.log(classify_results);
+
+            let classified_results = '';
+            if(classify_results.hole>=90){
+                classified_results = 'Hole';
+            }
+            if(classify_results.horizontal>=90){
+                if(classified_results==''){
+                    classified_results = 'Horizontal';
+                }else{
+                    classified_results = classified_results + ', Horizontal';
+                }
+            }
+            if(classify_results.verticle>=90){
+                if(classified_results==''){
+                    classified_results = 'Verticle';
+                }else{
+                    classified_results = classified_results + ', Verticle';
+                }
+            }
 
             let obj = {
                 file: file_path, file_processed: file_path_processed,
-                defect_count: -1,
+                defect_count: "Statistics of hole, horizontal and verticle defects",
                 defects: [
-                    {name: 'test_value', confidence: '-1'},
-                    {name: 'test_value2', confidence: '-2'},
-                ]
+                    {name: 'Hole', confidence: classify_results.hole},
+                    {name: 'Horizontal', confidence: classify_results.horizontal},
+                    {name: 'Verticle', confidence: classify_results.verticle}
+                ],
+                classified_as: classified_results
             };
 
             let isExit = false;
@@ -143,10 +159,19 @@ app.controller('MainController', [
         };
 
         $scope.startCapture = async function(){
+            let route = "start_capture?isAutomatic=0";
+            if(PageRefreshService.getIsAutomatic()=="1"){
+                console.log("LED panel is on auto config mood: success");
+                route = "start_capture?isAutomatic=1";
+            }
+            let batch = PageRefreshService.getCurrenBatchName();
+            let current_frame_count = $scope.images.length;
+            let data = '&batch=' + batch + '&index=' + current_frame_count;
+
             try {
                 let result = await $http({
                     method: "GET",
-                    url: host_url + "start_capture"
+                    url: host_url + route + data
                 });
                 console.log(result);
             }catch (err){
