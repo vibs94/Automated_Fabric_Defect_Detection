@@ -8,13 +8,19 @@ module.exports = {
         let execFilePath = './public/src/assets/files/classifier/classify.py';
         let python = 'C:/Python/Python36/python.exe';
 
+        let image_path = './public/src/assets/files/classifier/examples/' + image + '.jpg';
+        if (!fs.existsSync(image_path)) {
+            let message_str = 'Image, \'' + image + '\' is not exist in the server. Try 1,2,3,4,5 and 6.';
+            return callback(500, {message: message_str});
+        }
+
         let respond = await execFile(
             python, 
             [
                 execFilePath, 
                 '--model', model, 
                 '--labelbin', labelbin,
-                '--image', image
+                '--image', image_path
             ], 
             async function(err, stdout, stderr){
                 if(err){
@@ -28,6 +34,7 @@ module.exports = {
                 console.log(stderr);
                 console.log('--------------------------------------------------');
                 return callback(200,{
+                    image: '/src/assets/files/classifier/examples/' + image + '.jpg',
                     message: stdout,
                     error_log: stderr
                 })

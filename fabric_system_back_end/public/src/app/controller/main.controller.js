@@ -1,6 +1,36 @@
 app.controller('MainController', [
     '$scope','$http','host_url', '$location', 'PageRefreshService', 'socket',
     function($scope, $http,host_url, $location, PageRefreshService, socket){
+        //Initialize variables
+        $scope.pointer_events_red = 'none';
+        $scope.pointer_events_green = 'none';
+        $scope.pointer_events_blue = 'none';
+        $scope.opacity_red = '0.4';
+        $scope.opacity_green = '0.4';
+        $scope.opacity_blue = '0.4';
+
+        let isAutomatic = true;
+        $scope.updateIsAutomatic = function(condition){
+            if(condition){
+                console.log("LED panels are set to automatic configurations");
+                setFields('none', '0.4');
+                isAutomatic = true;
+            }else{
+                console.log("LED panels are set to manual configurations");
+                setFields('auto', '1');
+                isAutomatic = false;
+            }
+        }
+
+        setFields = function(opinter_event, opacity){
+            $scope.pointer_events_red = opinter_event;
+            $scope.pointer_events_green = opinter_event;
+            $scope.pointer_events_blue = opinter_event;
+            $scope.opacity_red = opacity;
+            $scope.opacity_green = opacity;
+            $scope.opacity_blue = opacity;
+        }
+
         $scope.images = [];
         $scope.batch_names = [];
         
@@ -153,38 +183,44 @@ app.controller('MainController', [
         };
 
         $scope.lightOn = async function(){
-            let isError = true;
-            if(typeof $scope.input_red === 'undefined' ||
-                $scope.input_red.replace(' ', '') === ''){
-                showErrorMessage("Red color cannot left blank or invalid value!");
-                let isError = false;
-                return;
-            }
-            if(typeof $scope.input_green === 'undefined' ||
-                $scope.input_green.replace(' ', '') === ''){
-                showErrorMessage("Green color cannot left blank or invalid value!");
-                let isError = false;
-                return;
-            }
-            if(typeof $scope.input_blue === 'undefined' ||
-                $scope.input_blue.replace(' ', '') === ''){
-                showErrorMessage("Blue color cannot left blank or invalid value!");
-                let isError = false;
-                return;
-            }
-            if(isError){
-                try {
-                    let result = await $http({
-                        method: "POST",
-                        url: host_url + "turn_on_light",
-                        data: 'r=' + $scope.input_red + '&b=' + $scope.input_blue + 
-                                '&g=' + $scope.input_green,
-                        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-                    });
-                    //console.log(result);
-                }catch (err){
-                    console.log(err);
-                    showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
+            if(isAutomatic){
+                console.log("LED lights configurations: Automatic Mood");
+                alert("Method is not implemented yet");
+            }else{
+                let isError = true;
+                console.log("LED lights configurations: Manual Mood");
+                if(typeof $scope.input_red === 'undefined' ||
+                    $scope.input_red.replace(' ', '') === ''){
+                    showErrorMessage("Red color cannot left blank or invalid value!");
+                    let isError = false;
+                    return;
+                }
+                if(typeof $scope.input_green === 'undefined' ||
+                    $scope.input_green.replace(' ', '') === ''){
+                    showErrorMessage("Green color cannot left blank or invalid value!");
+                    let isError = false;
+                    return;
+                }
+                if(typeof $scope.input_blue === 'undefined' ||
+                    $scope.input_blue.replace(' ', '') === ''){
+                    showErrorMessage("Blue color cannot left blank or invalid value!");
+                    let isError = false;
+                    return;
+                }
+                if(isError){
+                    try {
+                        let result = await $http({
+                            method: "POST",
+                            url: host_url + "turn_on_light",
+                            data: 'r=' + $scope.input_red + '&b=' + $scope.input_blue + 
+                                    '&g=' + $scope.input_green,
+                            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                        });
+                        //console.log(result);
+                    }catch (err){
+                        console.log(err);
+                        showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
+                    }
                 }
             }
         };
