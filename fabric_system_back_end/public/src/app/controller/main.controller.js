@@ -3,7 +3,7 @@ app.controller('MainController', [
     function($scope, $http,host_url, $location, PageRefreshService, socket){
         //Initialize variables
         $scope.pointer_events = 'none';
-        $scope.opacity = '0.4';
+        $scope.opacity = '0.4';        
 
         let isAutomatic = PageRefreshService.getIsAutomatic();
 
