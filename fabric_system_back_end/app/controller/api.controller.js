@@ -2,7 +2,13 @@ const api_repository = require('./../repositories/api.repository');
 
 module.exports = {
     classify_image: async function(req, res){
-        let image = './public/src/assets/files/classifier/examples/1.jpg';
+        if(typeof req.body==='undefined') {
+            return res.status(400).json({message: 'body data is required'});}
+        if(typeof req.body.image==='undefined' ||
+            req.body.image===''){
+            return res.status(400).json({message: 'image is required'});
+        }
+        let image = req.body.image;
         let labelbin = './public/src/assets/files/classifier/mlb.pickle';
         let model = './public/src/assets/files/classifier/fabric.model';
         api_repository.classify_image(
