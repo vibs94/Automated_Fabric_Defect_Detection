@@ -164,10 +164,14 @@ app.controller('MainController', [
                 console.log("LED panel is on auto config mood: success");
                 route = "start_capture?isAutomatic=1";
             }
+            let batch = PageRefreshService.getCurrenBatchName();
+            let current_frame_count = $scope.images.length;
+            let data = '&batch=' + batch + '&index=' + current_frame_count;
+
             try {
                 let result = await $http({
                     method: "GET",
-                    url: host_url + route
+                    url: host_url + route + data
                 });
                 console.log(result);
             }catch (err){

@@ -62,11 +62,12 @@ module.exports = {
         }
     },
 
-    capture: async function(is_begin, isAutomatic, callback){
+    capture: async function(is_begin, isAutomatic, index, batch, callback){
         //Fix start stop process route
         let route = '/stop';
         if(is_begin){
-            route = '/start?isAutomatic=' + isAutomatic;
+            route = '/start?isAutomatic=' + isAutomatic + 
+                        '&batch=' + batch + '&index=' + index;
         }
         try {
             await request({
