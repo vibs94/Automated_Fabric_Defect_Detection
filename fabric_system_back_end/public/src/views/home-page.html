@@ -1,11 +1,36 @@
-<div class="container" style="margin-top: 25px" ng-init="onInit()">
-    <div class="col-lg-12">
-        <div class="col-lg-8">
-            <h4 style="font-weight: bold">Troubleshoot</h4>
-            <div style="width: 100%; border: 1px solid black; margin-top: 10px; padding: 20px; text-align: center">
+<div class="container" style="margin-top: 25px" ng-init="onInit()"  >
+    <div class="col-lg-12" style="font-family: Questrial">
+        <div class="col-lg-8 col-lg-offset-2 ">
+
+            <h4 style="font-weight: bold">Add New Fabric</h4>
+            <div style="width: 100%; margin-top: 10px; padding: 20px; text-align: center" class="panel panel-default">
                 <div class="col-lg-12">
-                    <div class="col-lg-4">
-                        <label for="redColor" class="control-label">Red [0-255]</label>
+                    <div class="col-lg-4 col-lg-offset-4">
+                        <label for="batchName" class="control-label">Name</label>
+                        <input type="text" id="batchName" ng-model="batch_name" class="form-control">
+                    </div>
+                </div>
+                <input type="button" class="btn btn-success" value="Create" ng-click="createBatch()" style="margin-top: 15px; width: 150px">
+            </div>
+
+            <h4 style="font-weight: bold; ">Lighting</h4>
+            <div style="width: 100%; margin-top: 10px; padding: 20px; text-align: center" class="panel panel-default">
+                <div class="col-lg-12">
+                    <div class="col-lg-12">
+                        <div class="col-lg-6">
+                            <div class="radio">
+                                <label><input type="radio" name="optradio" checked>Automatic</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="radio">
+                                <label><input type="radio" name="optradio" >Manual</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 " style="pointer-events: none ">
+                        <label for="redColor" class="control-label d">Red [0-255]</label>
                         <input type="text" id="redColor" ng-model="input_red" class="form-control">
                     </div>
                     <div class="col-lg-4">
@@ -20,16 +45,9 @@
                 <input type="button" class="btn btn-default" value="Turn On" ng-click="lightOn()" style="margin-top: 15px; width: 150px">
                 <input type="button" class="btn btn-default" value="Turn Off"  ng-click="lightOff()" style="margin-top: 15px; width: 150px">
             </div>
-            <div style="width: 100%; border: 1px solid black; margin-top: 10px; padding: 20px; text-align: center">
-                <div class="col-lg-12">
-                    <div class="col-lg-4 col-lg-offset-4">
-                        <label for="batchName" class="control-label">Batch Name</label>
-                        <input type="text" id="batchName" ng-model="batch_name" class="form-control">
-                    </div>
-                </div>
-                <input type="button" class="btn btn-success" value="Create" ng-click="createBatch()" style="margin-top: 15px; width: 150px">
-            </div>
-            <div style="width: 100%; border: 1px solid black; margin-top: 10px; padding: 20px; text-align: center">
+
+            <h4 style="font-weight: bold; ">Prevously Added</h4>
+            <div style="width: 100%; margin-top: 10px; padding: 20px; text-align: center" class="panel panel-default">
                 <div class="col-lg-12">
                     <div class="col-lg-8 col-lg-offset-2">
                         <div class="list-group">
@@ -42,17 +60,6 @@
                 <p style="color: red">[Note: Click on a list to view the results with statistics]</p>
             </div>
         </div>
-        <div class="col-lg-4">
-            <h4 style="font-weight: bold">Automated Fabric Defect Detection System</h4>
-            <p>
-                Fabric defect detection is a significant phase of quality control in textile industry.
-                Manual defect inspection lacks the accuracy and the labor cost is high.
-                Automating this process is challenging due to a large number of fabric types and defect types.
-                Defect detection relies on the identification of regions that are different from the uniform background.
-                Our intention is to develop a system to detect defects in uniform textured fabrics with Image Processing
-                techniques and Neural Networks. The results indicated that the use of light beams based on the color of the
-                material is more effective than the white light beam.
-            </p>
-        </div>
+
     </div>
 </div>
