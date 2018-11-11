@@ -53,6 +53,9 @@ app.controller('MainController', [
                     classified_results = classified_results + ', Verticle';
                 }
             }
+            if(classified_results==''){
+                classified_results = 'No defect ditected'
+            }
 
             let obj = {
                 file: file_path, file_processed: file_path_processed,
@@ -95,14 +98,41 @@ app.controller('MainController', [
                 if (result.status === 200) {
                     let images_arr = result.data.files.images;
                     let processed_images_arr = result.data.files.processed_images;
+                    let classify_results = result.data.files.classifications;
+
                     for(let i=0; i<images_arr.length; i++){
+                        let classifiction = classify_results[i];
+                        let classified_results = '';
+                        if(classifiction.hole>=90){
+                            classified_results = 'Hole';
+                        }
+                        if(classifiction.horizontal>=90){
+                            if(classified_results==''){
+                                classified_results = 'Horizontal';
+                            }else{
+                                classified_results = classified_results + ', Horizontal';
+                            }
+                        }
+                        if(classifiction.verticle>=90){
+                            if(classified_results==''){
+                                classified_results = 'Verticle';
+                            }else{
+                                classified_results = classified_results + ', Verticle';
+                            }
+                        }
+                        if(classified_results==''){
+                            classified_results = 'No defect ditected'
+                        }
+
                         let obj = {
                             file: images_arr[i], file_processed: processed_images_arr[i],
-                            defect_count: -1,
+                            defect_count: "Statistics of hole, horizontal and verticle defects",
                             defects: [
-                                {name: 'test_value', confidence: '-1'},
-                                {name: 'test_value2', confidence: '-2'},
-                            ]
+                                {name: 'Hole', confidence: classifiction.hole},
+                                {name: 'Horizontal', confidence: classifiction.horizontal},
+                                {name: 'Verticle', confidence: classifiction.verticle}
+                            ],
+                            classified_as: classified_results
                         };
                         $scope.images.push(obj);
                     }
