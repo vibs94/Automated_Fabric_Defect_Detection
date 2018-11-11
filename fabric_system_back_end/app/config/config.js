@@ -6,9 +6,14 @@ module.exports = {
     system_upload_folder: 'sample_fabric_defects',
 
     //Python paths
-    server_python_path: 'C:/Users/Administrator/AppData/Local/Programs/Python/Python36/python.exe',
-    local_python_path: 'C:/Python/Python36/python.exe',
+    //Server
+    python_path: 'C:/Users/Administrator/AppData/Local/Programs/Python/Python36/python.exe',
+    //Local 
+    //python_path: 'C:/Python/Python36/python.exe',
 
     //Classifier Location and config
-    classifier_path: './public/src/assets/files/classifier/classify.py'
+    classifier_path: './public/src/assets/files/classifier/classify.py',
+
+    //Preprocessor
+    preprocessor_exec_file_path: './public/src/assets/files/processor/server_preprocessor.exe'
 };

@@ -42,7 +42,9 @@ image = np.expand_dims(image, axis=0)
 # binarizer
 #print("[INFO] loading network...")
 
-file_origin = "C:/Users/Administrator/Desktop/Final FYP Project Files [LocalHost]/Automated_Fabric_Defect_Detection/fabric_system_back_end/public/src/assets/files/classifier/"
+# file_origin = "C:/Users/Administrator/Desktop/Final FYP Project Files [LocalHost]/Automated_Fabric_Defect_Detection/fabric_system_back_end/public/src/assets/files/classifier/"
+file_origin = "G:/Final Year Project Development/Embedded_Device/Automated_Fabric_Defect_Detection/fabric_system_back_end/public/src/assets/files/classifier/"
+
 model = load_model(file_origin + "fabric.model")
 mlb = pickle.loads(open(file_origin + "mlb.pickle", "rb").read())
 

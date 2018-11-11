@@ -4,12 +4,10 @@ const request = require('request');
 const server_config = require('../config/config.js');
 
 module.exports = {
-    classify_image: async function(image, labelbin, model, callback){
-        let execFilePath = './public/src/assets/files/classifier/classify.py';
-        //let python = 'C:/Python/Python36/python.exe';
-        
-        //Python exe file location in server pc
-        let python = 'C:/Users/Administrator/AppData/Local/Programs/Python/Python36/python.exe';
+    classify_image: async function(image, callback){
+        let execFilePath = server_config.classifier_path;
+        //Python exe file location 
+        let python = server_config.python_path;
 
         let image_path = './public/src/assets/files/classifier/examples/' + image + '.jpg';
         if (!fs.existsSync(image_path)) {
@@ -21,8 +19,6 @@ module.exports = {
             python, 
             [
                 execFilePath, 
-                '--model', model, 
-                '--labelbin', labelbin,
                 '--image', image_path
             ], 
             async function(err, stdout, stderr){
@@ -144,19 +140,38 @@ module.exports = {
         const image_uploaded_folder = './public/src/assets/images/upload/' + batch_name + '/';
         let file_list = [];
         let processed_file_list = [];
+        let json_files = [];
+        let classifications = [];
 
         try{
             //Read files and store the file names
-            await fs.readdirSync(image_uploaded_folder).forEach(file => {
-                    if(file.includes("processed")){
-                        processed_file_list.push('src/assets/images/upload/' + batch_name + '/' + file);
-                    }else {
-                        file_list.push('src/assets/images/upload/' + batch_name + '/' + file);
-                    }
+            await fs.readdirSync(image_uploaded_folder).forEach(async file => {
+                if(file.includes("json")){
+                    let file_path = './public/src/assets/images/upload/' + batch_name + '/' + file
+                    json_files.push(file_path);
+                }else if(file.includes("processed")){
+                    processed_file_list.push('src/assets/images/upload/' + batch_name + '/' + file);
+                }else {
+                    file_list.push('src/assets/images/upload/' + batch_name + '/' + file);
+                }
             });
+            
+            await Object.keys(json_files)
+                .forEach(async function(key){
+                    let json_file = json_files[key];
+                    let err, data = await fs.readFileSync(json_file,'utf8');
+                    if (err){
+                        console.log(err);
+                    } else {
+                        classifications.push(JSON.parse(data)); 
+                    }
+                })
 
             images = {
-                images: file_list, processed_images: processed_file_list};
+                images: file_list, 
+                processed_images: processed_file_list,
+                classifications: classifications
+            };
 
             return callback(200, {files: images});
         }catch (ex){
@@ -187,7 +202,7 @@ module.exports = {
                 });
 
             //Constant File Location
-            let execFilePath = './public/src/assets/files/processor/server_preprocessor.exe';
+            let execFilePath = server_config.preprocessor_exec_file_path;
             //Arguments:
             //      [file_name]
             //      [allow_morphology_operations]
@@ -231,10 +246,10 @@ module.exports = {
                     let file_path_processed = 'src/assets/images/upload/' + upload_loc + '/' +
                                                 file_name + '_' + file_suffix + '_processed.jpg';
                     let classify_path = './public/' + file_path_processed;
-                    console.log(classify_path);
 
                     await execFile(
-                        server_config.server_python_path, 
+                        // server_config.server_python_path, 
+                        server_config.python_path, 
                         [
                             server_config.classifier_path, 
                             '--image', classify_path
@@ -253,12 +268,25 @@ module.exports = {
                             console.log('stderror:');
                             console.log(stderr);
                             console.log('--------------------------------------------------');
-
+                            
+                            //Save the response as a json file for later useage
+                            var classify_data = JSON.stringify(response);
+                            classify_data_file_path = 'public/src/assets/images/upload/' + upload_loc + '/' +
+                                                file_name + '_' + file_suffix + '.json';
+                            await fs.writeFile(classify_data_file_path, classify_data, function (err) {
+                                if(err){
+                                    console.log('Error: Classification details not written to the json file');
+                                    console.log(err.toString());
+                                }else{
+                                    console.log('Classification details written to the json file successfully');
+                                }
+                            });
                             
                             return callback(200, {
                                 message: stdout,
                                 std_err: stderr,
-                                message: "process completed: " + file_path_processed
+                                message: "process completed: " + file_path_processed,
+                                classification_results: response
                             }, file_path, file_path_processed, response);
                         }
                     );
