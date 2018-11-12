@@ -9,7 +9,7 @@ module.exports = {
     //Server
     python_path: 'C:/Users/Administrator/AppData/Local/Programs/Python/Python36/python.exe',
     //Local 
-    //python_path: 'C:/Python/Python36/python.exe',
+    // python_path: 'C:/Python/Python36/python.exe',
 
     //Classifier Location and config
     classifier_path: './public/src/assets/files/classifier/classify.py',

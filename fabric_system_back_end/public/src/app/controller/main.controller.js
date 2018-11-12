@@ -3,8 +3,31 @@ app.controller('MainController', [
     function($scope, $http,host_url, $location, PageRefreshService, socket){
         //Initialize variables
         $scope.pointer_events = 'none';
-        $scope.opacity = '0.4';        
+        $scope.textfield_pointer_events = 'auto';
 
+        $scope.opacity = '0.4';
+        $scope.textfield_opacity = '1';
+
+        $scope.is_capturing = PageRefreshService.getIsCapturing();
+        $scope.defect_count = 0;  
+        $scope.images = [];
+        
+        //Selection for the batch names
+        $scope.batch_names = [{file_name: 'New Batch'}];
+        $scope.current_select_batch = $scope.batch_names[0];
+
+        $scope.changeBatchSelection = function(){
+            if($scope.current_select_batch.file_name==$scope.batch_names[0].file_name){
+                $scope.textfield_pointer_events = 'auto';
+                $scope.textfield_opacity = '1';
+            }else{
+                $scope.textfield_pointer_events = 'none';
+                $scope.textfield_opacity = '0.4';
+                $scope.batch_name = "";
+            }
+        }
+
+        let showErrorMessage = function(message){alert(message);};
         let isAutomatic = PageRefreshService.getIsAutomatic();
 
         $scope.updateIsAutomatic = function(condition){
@@ -24,11 +47,6 @@ app.controller('MainController', [
             $scope.opacity = opacity;
         }
 
-        $scope.images = [];
-        $scope.batch_names = [];
-        
-        let showErrorMessage = function(message){alert(message);};
-
         socket.on('fabric_defect_server', function(msg){
             let file_path = msg.path;
             let file_path_processed = msg.processed_path;
@@ -38,25 +56,32 @@ app.controller('MainController', [
             let classified_results = '';
             if(classify_results.hole>=90){
                 classified_results = 'Hole';
+                $scope.defect_count = $scope.defect_count + 1;
             }
             if(classify_results.horizontal>=90){
                 if(classified_results==''){
                     classified_results = 'Horizontal';
+                    $scope.defect_count = $scope.defect_count + 1;
                 }else{
                     classified_results = classified_results + ', Horizontal';
+                    let tmp_array = classified_results.split(",");
+                    $scope.defect_count = $scope.defect_count + tmp_array.length;
                 }
             }
             if(classify_results.verticle>=90){
                 if(classified_results==''){
                     classified_results = 'Verticle';
+                    $scope.defect_count = $scope.defect_count + 1;
                 }else{
                     classified_results = classified_results + ', Verticle';
+                    let tmp_array = classified_results.split(",");
+                    $scope.defect_count = $scope.defect_count + tmp_array.length;
                 }
             }
             if(classified_results==''){
                 classified_results = 'No defect ditected'
             }
-
+            
             let obj = {
                 file: file_path, file_processed: file_path_processed,
                 defect_count: "Statistics of hole, horizontal and verticle defects",
@@ -75,11 +100,12 @@ app.controller('MainController', [
             if(!isExit){$scope.images.push(obj)}
             console.log("Image received through socket.io connection: success");
 
-            setTimeout(function(){
-                $scope.$apply();}, 3000);
+            // setTimeout(function(){
+            //     $scope.$apply();}, 3000);
         });
 
         $scope.getImages = async function(){
+            console.log(PageRefreshService.getIsCapturing())
             //Get selected batch name
             let data = PageRefreshService.getCurrenBatchName();
             console.log('Current upload folder is set to: ' + data);
@@ -105,19 +131,26 @@ app.controller('MainController', [
                         let classified_results = '';
                         if(classifiction.hole>=90){
                             classified_results = 'Hole';
+                            $scope.defect_count = $scope.defect_count + 1;
                         }
                         if(classifiction.horizontal>=90){
                             if(classified_results==''){
                                 classified_results = 'Horizontal';
+                                $scope.defect_count = $scope.defect_count + 1;
                             }else{
                                 classified_results = classified_results + ', Horizontal';
+                                let tmp_array = classified_results.split(",");
+                                $scope.defect_count = $scope.defect_count + tmp_array.length;
                             }
                         }
                         if(classifiction.verticle>=90){
                             if(classified_results==''){
                                 classified_results = 'Verticle';
+                                $scope.defect_count = $scope.defect_count + 1;
                             }else{
                                 classified_results = classified_results + ', Verticle';
+                                let tmp_array = classified_results.split(",");
+                                $scope.defect_count = $scope.defect_count + tmp_array.length;
                             }
                         }
                         if(classified_results==''){
@@ -160,6 +193,17 @@ app.controller('MainController', [
                             file_name: files_arr[i]};
                         $scope.batch_names.push(obj);
                     }
+                    let data = PageRefreshService.getCurrenBatchName();
+                    if(typeof data !== 'undefined'){
+                        for(let index in $scope.batch_names){
+                            if($scope.batch_names[index].file_name===data){
+                                $scope.current_select_batch = $scope.batch_names[index];
+                                $scope.textfield_pointer_events = 'none';
+                                $scope.textfield_opacity = '0.4';
+                                break;
+                            }
+                        }
+                    }
                     $scope.$apply();
                 }
             }catch (err){
@@ -168,8 +212,7 @@ app.controller('MainController', [
             }
         };
 
-        $scope.openHistory = async function(index){
-            let data = $scope.batch_names[index].file_name;
+        $scope.openHistory = async function(data){
             PageRefreshService.updateCurrentBatchName(data);
             try {
                 let result = await $http({
@@ -204,6 +247,15 @@ app.controller('MainController', [
                     url: host_url + route + data
                 });
                 console.log(result);
+                
+                //Start The Capture
+                isTimer = true;
+                processTimer();
+
+                PageRefreshService.setIsCapturing(true);
+                $scope.is_capturing = 
+                    PageRefreshService.getIsCapturing();
+                $scope.$apply();
             }catch (err){
                 console.log(err);
                 showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
@@ -217,6 +269,14 @@ app.controller('MainController', [
                     url: host_url + "stop_capture"
                 });
                 //console.log(result);
+
+                //Stop the capture
+                isTimer = false;
+
+                PageRefreshService.setIsCapturing(false);
+                $scope.is_capturing = 
+                    PageRefreshService.getIsCapturing();
+                $scope.$apply();
             }catch (err){
                 console.log(err);
                 showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
@@ -281,28 +341,47 @@ app.controller('MainController', [
         };
 
         $scope.createBatch = async function(){
-            let isError = true;
-            if(typeof $scope.batch_name === 'undefined' ||
-                $scope.batch_name.replace(' ', '') === ''){
-                showErrorMessage("Batch name cannot left blank or invalid value!");
-                let isError = false;
-                return;
-            }
-            if(isError){
-                let data =  $scope.batch_name;
+            if($scope.current_select_batch.file_name=='New Batch'){
+                let isError = true;
+                if(typeof $scope.batch_name === 'undefined' ||
+                    $scope.batch_name.replace(' ', '') === ''){
+                    showErrorMessage("Batch name cannot left blank or invalid value!");
+                    let isError = false;
+                    return;
+                }
+                if(isError){
+                    let data =  $scope.batch_name;
+                    PageRefreshService.updateCurrentBatchName(data);
+                    try {
+                        let result = await $http({
+                            method: "POST",
+                            url: host_url + "create_batch",
+                            data: 'data=' + data,
+                            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                        });
+                        //console.log(result);
+                        let obj = {
+                            file_name: data};
+                        $scope.batch_names.push(obj);
+
+                        $location.path( "/process" );
+                        $scope.$apply();
+                    }catch (err){
+                        console.log(err);
+                        showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
+                    }
+                }
+            }else{
+                let data = $scope.current_select_batch.file_name;
                 PageRefreshService.updateCurrentBatchName(data);
                 try {
                     let result = await $http({
                         method: "POST",
-                        url: host_url + "create_batch",
+                        url: host_url + "update_batch_folder",
                         data: 'data=' + data,
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                     });
                     //console.log(result);
-                    let obj = {
-                        file_name: data};
-                    $scope.batch_names.push(obj);
-
                     $location.path( "/process" );
                     $scope.$apply();
                 }catch (err){
@@ -310,5 +389,32 @@ app.controller('MainController', [
                     showErrorMessage(err.status + ', ' + err.statusText + '\n' + err.data.message);
                 }
             }
+        }
+
+        let seconds = 0;
+        let minutes = 0;
+        let hours = 0;
+        let isTimer;
+        $scope.timer = "00:00:00";
+        function processTimer(){
+            setTimeout(function(){
+                seconds = seconds + 1;
+                if(seconds==60){
+                    seconds = 0;
+                    minutes = minutes + 1;
+                    if(minutes = 60){
+                        minutes = 0;
+                        hours = hours + 1;
+                    }
+                }
+                
+                $scope.timer = n(hours) + ":" + n(minutes) + ":" + n(seconds);
+                $scope.$apply();
+                if(isTimer){ processTimer();}
+            }, 1000);
+        }
+
+        function n(n){
+            return n > 9 ? "" + n: "0" + n;
         }
 }]);
