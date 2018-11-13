@@ -179,7 +179,7 @@ module.exports = {
         }
     },
 
-    upload_and_process : async function(image, file_name, file_suffix, callback){
+    upload_and_process : async function(image, file_name, file_suffix, file_index, callback){
         //Convert the image
         image = image.replace(/^data:image\/\w+;base64,/, "");
         image = image.replace(/ /g, '+');
@@ -195,9 +195,10 @@ module.exports = {
             await fs.writeFileSync(file_path,
                 decodedImage, async function (err, data) {
                     if (err) {
+                        console.log(err);
                         return callback(500, {
-                            data: err.toString()
-                        });
+                            message: err
+                        }, '', '', {}, file_index);
                     }
                 });
 
@@ -238,7 +239,7 @@ module.exports = {
                         return callback(500, {
                             message: err,
                             std_err: stderr
-                        }, '', '', {});
+                        }, '', '', {}, file_index);
                     }
                     
                     file_path = 'src/assets/images/upload/' + upload_loc + '/' +
@@ -260,7 +261,7 @@ module.exports = {
                                 return callback(500, {
                                     message: err,
                                     std_err: stderr
-                                }, '', '', {});
+                                }, '', '', {}, file_index);
                             }
                             console.log('-------------Classification Results---------------');
                             let response = JSON.parse(stdout);
@@ -287,13 +288,13 @@ module.exports = {
                                 std_err: stderr,
                                 message: "process completed: " + file_path_processed,
                                 classification_results: response
-                            }, file_path, file_path_processed, response);
+                            }, file_path, file_path_processed, response, file_index);
                         }
                     );
                 }
             );
         }catch (ex){
-            return callback(500, {message: ex.toString()}, '', '', {});
+            return callback(500, {message: ex.toString()}, '', '', {}, file_index);
         }
     },
 

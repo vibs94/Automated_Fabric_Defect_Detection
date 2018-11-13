@@ -11,7 +11,10 @@ app.controller('MainController', [
         $scope.is_capturing = PageRefreshService.getIsCapturing();
         $scope.defect_count = 0;  
         $scope.images = [];
-        
+
+        //current process
+        $scope.current_process = PageRefreshService.getCurrentProcess();
+
         //Selection for the batch names
         $scope.batch_names = [{file_name: 'New Batch'}];
         $scope.current_select_batch = $scope.batch_names[0];
@@ -47,41 +50,43 @@ app.controller('MainController', [
             $scope.opacity = opacity;
         }
 
-        socket.on('fabric_defect_server', function(msg){
+        socket.on('fabric_defect_server', async function(msg){
             let file_path = msg.path;
             let file_path_processed = msg.processed_path;
+            let frame_defect_count = 0;
             let classify_results = msg.classify_results;
             console.log(classify_results);
 
             let classified_results = '';
             if(classify_results.hole>=90){
                 classified_results = 'Hole';
-                $scope.defect_count = $scope.defect_count + 1;
+                frame_defect_count = 1;
             }
             if(classify_results.horizontal>=90){
                 if(classified_results==''){
                     classified_results = 'Horizontal';
-                    $scope.defect_count = $scope.defect_count + 1;
+                    frame_defect_count = 1;
                 }else{
                     classified_results = classified_results + ', Horizontal';
                     let tmp_array = classified_results.split(",");
-                    $scope.defect_count = $scope.defect_count + tmp_array.length;
+                    frame_defect_count = tmp_array.length;
                 }
             }
             if(classify_results.verticle>=90){
                 if(classified_results==''){
                     classified_results = 'Verticle';
-                    $scope.defect_count = $scope.defect_count + 1;
+                    frame_defect_count = 1;
                 }else{
                     classified_results = classified_results + ', Verticle';
                     let tmp_array = classified_results.split(",");
-                    $scope.defect_count = $scope.defect_count + tmp_array.length;
+                    frame_defect_count = tmp_array.length;
                 }
             }
             if(classified_results==''){
                 classified_results = 'No defect ditected'
             }
             
+            $scope.defect_count = $scope.defect_count + frame_defect_count;
             let obj = {
                 file: file_path, file_processed: file_path_processed,
                 defect_count: "Statistics of hole, horizontal and verticle defects",
@@ -95,17 +100,17 @@ app.controller('MainController', [
 
             let isExit = false;
             $scope.images.forEach(function(entry) {
-                if(entry.file===obj.file){isExit = true;}
+                if(entry.file===obj.file){
+                    isExit = true;}
             });
-            if(!isExit){$scope.images.push(obj)}
-            console.log("Image received through socket.io connection: success");
-
-            // setTimeout(function(){
-            //     $scope.$apply();}, 3000);
+            if(!isExit){
+                $scope.images.push(obj);
+                console.log("Image received through socket.io connection: success");
+            }
         });
 
         $scope.getImages = async function(){
-            console.log(PageRefreshService.getIsCapturing())
+            console.log('Capturing status: ' + PageRefreshService.getIsCapturing());
             //Get selected batch name
             let data = PageRefreshService.getCurrenBatchName();
             console.log('Current upload folder is set to: ' + data);
@@ -125,38 +130,39 @@ app.controller('MainController', [
                     let images_arr = result.data.files.images;
                     let processed_images_arr = result.data.files.processed_images;
                     let classify_results = result.data.files.classifications;
+                    let frame_defect_count = 0;
 
                     for(let i=0; i<images_arr.length; i++){
                         let classifiction = classify_results[i];
                         let classified_results = '';
                         if(classifiction.hole>=90){
                             classified_results = 'Hole';
-                            $scope.defect_count = $scope.defect_count + 1;
+                            frame_defect_count = 1;
                         }
                         if(classifiction.horizontal>=90){
                             if(classified_results==''){
                                 classified_results = 'Horizontal';
-                                $scope.defect_count = $scope.defect_count + 1;
+                                frame_defect_count = 1;
                             }else{
                                 classified_results = classified_results + ', Horizontal';
                                 let tmp_array = classified_results.split(",");
-                                $scope.defect_count = $scope.defect_count + tmp_array.length;
+                                frame_defect_count = tmp_array.length;
                             }
                         }
                         if(classifiction.verticle>=90){
                             if(classified_results==''){
                                 classified_results = 'Verticle';
-                                $scope.defect_count = $scope.defect_count + 1;
+                                frame_defect_count = 1;
                             }else{
                                 classified_results = classified_results + ', Verticle';
                                 let tmp_array = classified_results.split(",");
-                                $scope.defect_count = $scope.defect_count + tmp_array.length;
+                                frame_defect_count = tmp_array.length;
                             }
                         }
                         if(classified_results==''){
                             classified_results = 'No defect ditected'
                         }
-
+                        $scope.defect_count = $scope.defect_count + frame_defect_count;
                         let obj = {
                             file: images_arr[i], file_processed: processed_images_arr[i],
                             defect_count: "Statistics of hole, horizontal and verticle defects",
@@ -168,6 +174,10 @@ app.controller('MainController', [
                             classified_as: classified_results
                         };
                         $scope.images.push(obj);
+                    }
+                    if(typeof $scope.current_process=='undefined'){
+                        $scope.current_process = {
+                            image_count: $scope.images.length, defect_count: $scope.defect_count};
                     }
                     //console.log($scope.images);
                     $scope.$apply();
@@ -253,6 +263,10 @@ app.controller('MainController', [
                 processTimer();
 
                 PageRefreshService.setIsCapturing(true);
+                PageRefreshService.setCurrentProcess(
+                    {image_count: $scope.images.length, defect_count: $scope.defect_count});
+                $scope.current_process = 
+                    PageRefreshService.getCurrentProcess();
                 $scope.is_capturing = 
                     PageRefreshService.getIsCapturing();
                 $scope.$apply();
@@ -363,6 +377,11 @@ app.controller('MainController', [
                         let obj = {
                             file_name: data};
                         $scope.batch_names.push(obj);
+
+                        PageRefreshService.setCurrentProcess(
+                            {image_count: $scope.images.length, defect_count: $scope.defect_count});
+                        $scope.current_process = 
+                            PageRefreshService.getCurrentProcess();
 
                         $location.path( "/process" );
                         $scope.$apply();

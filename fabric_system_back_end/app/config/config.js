@@ -1,6 +1,6 @@
 module.exports = {
     //server url for embedded system, hosted by ngrok services
-    system_url: 'https://d483f8c9.ngrok.io',
+    system_url: 'https://5bae62f7.ngrok.io',
 
     //Upload file config
     system_upload_folder: 'sample_fabric_defects',

@@ -156,11 +156,16 @@ module.exports = {
             req.body.file_suffix===''){
             return res.status(400).json({message: 'file_suffix is required'});
         }
+        if(typeof req.body.file_index==='undefined' ||
+            req.body.file_index===''){
+            return res.status(400).json({message: 'file_index is required'});
+        }
         api_repository.upload_and_process(
             req.body.encode_str,
             req.body.file_name,
             req.body.file_suffix,
-            async function (status, message, path, processed_path, classify_results) {
+            req.body.file_index,
+            async function (status, message, path, processed_path, classify_results, file_index) {
                 let data = {
                     path: path, processed_path: processed_path, classify_results: classify_results};
                 io.emit('fabric_defect_server', data);

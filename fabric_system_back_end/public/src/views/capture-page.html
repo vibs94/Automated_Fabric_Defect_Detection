@@ -8,8 +8,8 @@
             <p>
                 <b>Status : </b> {{is_capturing}} &emsp;&emsp;&emsp;
                 <b>Time :</b> {{timer}} &emsp;&emsp;&emsp;
-                <b>Number of images :</b> {{images.length}} &emsp;&emsp;&emsp;
-                <b>Defects count :</b> {{defect_count}}
+                <b>Number of images :</b> {{images.length - current_process.image_count}} &emsp;&emsp;&emsp;
+                <b>Defects count :</b> {{defect_count - current_process.defect_count}}
             </p>
         </div>
 
@@ -17,7 +17,8 @@
     <div style="text-align: center">
         <h4>Captured Image Feed</h4>
         <section class="image_panel">
-            <div style="height: 50%" ng-repeat="(key, item) in images">
+            <div style="height: 50%" ng-repeat="(key, item) in images"
+            ng-style="{'order': (0-key)}">
                 <img ng-src="{{item.file}}" err-src="{{item.file}}" />
                 <!--<img src="src/assets/images/upload/sanna_js.jpg">-->
             </div>
@@ -26,7 +27,8 @@
     <div style="text-align: center; margin-bottom: 50px">
         <h4>Processed Image Feed</h4>
         <section class="image_panel">
-            <div style="height: 50%" ng-repeat="(key, item) in images">
+            <div style="height: 50%; order: 1000" 
+                ng-repeat="(key, item) in images" ng-style="{'order': (0-key)}">
                 <img ng-src="{{item.file_processed}}"
                      err-src="{{item.file_processed}}" style="margin-bottom: 10px"/>
                 <!--<img src="src/assets/images/upload/sanna_js.jpg" style="margin-bottom: 10px">-->

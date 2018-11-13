@@ -4,6 +4,7 @@ angular.module('fabric-system-front-end').factory('PageRefreshService', [functio
     let current_batch_name;
 
     //Capturing status
+    let current_process;
     let is_capturing;
 
     //LED panel color configurations
@@ -21,6 +22,10 @@ angular.module('fabric-system-front-end').factory('PageRefreshService', [functio
         current_batch_name =
             localStorage.getItem("current_batch_name");
     }
+    if(localStorage.getItem("current_process")!==null){
+        current_process =
+            JSON.parse(localStorage.getItem("current_process"));
+    }
 
     let service = {};
     //Page refresh section
@@ -29,6 +34,8 @@ angular.module('fabric-system-front-end').factory('PageRefreshService', [functio
     //Process capture status
     service.getIsCapturing = getIsCapturing;
     service.setIsCapturing = setIsCapturing;
+    service.getCurrentProcess = getCurrentProcess;
+    service.setCurrentProcess = setCurrentProcess;
 
     //LED panel color configuration
     service.getIsAutomatic = getIsAutomatic;
@@ -42,6 +49,8 @@ angular.module('fabric-system-front-end').factory('PageRefreshService', [functio
     return service;
 
     function getIsCapturing() { return is_capturing;}
+    function getCurrentProcess() { 
+        return current_process;}
     function setIsCapturing(flag){
         if(flag){
             is_capturing = 'Capturing..';
@@ -51,6 +60,11 @@ angular.module('fabric-system-front-end').factory('PageRefreshService', [functio
             is_capturing = 'Idle';
             localStorage.setItem("capturing_status", 'Idle');
         }
+    }
+    function setCurrentProcess(obj){
+        current_process = obj;
+        localStorage.setItem("current_process", 
+                        JSON.stringify(current_process));
     }
 
     function getIsAutomatic() { return isAutomatic;}
